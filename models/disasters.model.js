@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import seed from '../db/disasters.seed';
 
+require('babel-polyfill');
+
 const DisasterSchema = new mongoose.Schema({
   locationData: {
     state: {
@@ -33,27 +35,7 @@ DisasterModel.getAll = () => {
 };
 
 DisasterModel.addDisaster = (disasterToAdd) => {
-  const {
-    state,
-    incidentType,
-    incidentBeginDate,
-    incidentEndDate,
-  } = disasterToAdd;
-
-  const relevantDisasterData = {
-    locationData: {
-      state,
-    },
-    disasterDescription: {
-      incidentType,
-    },
-    durationData: {
-      incidentBeginDate: new Date(incidentBeginDate.replace(/\s+/g, '')),
-      incidentEndDate: new Date(incidentEndDate.replace(/\s+/g, '')),
-    },
-  };
-  const disasterCandidate = new Disaster(relevantDisasterData);
-  disasterCandidate
+  disasterToAdd
     .save()
     .then(() => {
       console.log('success');
@@ -63,8 +45,7 @@ DisasterModel.addDisaster = (disasterToAdd) => {
     });
 };
 
-DisasterModel.seed = () => {
-  console.log('hi');
+DisasterModel.seed = async() => {
   DisasterModel.remove({}, () => {
     console.log('remove all disasters');
   });

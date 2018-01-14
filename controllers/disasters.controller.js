@@ -1,5 +1,6 @@
 import Disaster from '../models/disasters.model';
 import logger from '../core/logger/app-logger';
+import DataFormatter from '../utils/format.util';
 
 const controller = {};
 
@@ -16,14 +17,13 @@ controller.getAll = async(req, res) => {
 
 controller.seedData = async(req, res) => {
   try {
-    Disaster.seed().then((disasters) => {
+    await Disaster.seed().then((disasters) => {
       console.log(disasters[0]);
-      console.log('resolving promise');
-      Disaster.addDisaster(disasters[0]);
-      // for (let index = 0; index < disasters.length; index++) {
-      //   const disasterToAdd = disasters[index];
-      // Disaster.addDisaster(disasterToAdd);
-      // }
+      for (let index = 0; index < disasters.length; index++) {
+        const formattedDisaster = DataFormatter.formatDisaster(disasters[index]);
+        const disasterToAdd = new Disaster(formattedDisaster);
+        Disaster.addDisaster(disasterToAdd);
+      }
     });
     logger.info('Seeding...');
     res.send('Seeded!');

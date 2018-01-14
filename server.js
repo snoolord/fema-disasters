@@ -8,6 +8,8 @@ import cars from './routes/cars.route';
 import connectToDb from './db/connect';
 import disasters from './routes/disasters.route';
 
+require('babel-polyfill');
+
 const port = config.serverPort;
 logger.stream = {
   write(message, encoding) {
