@@ -33,6 +33,16 @@ controller.seedData = async(req, res) => {
   }
 };
 
+controller.getDisaster = async(req, res) => {
+  const startDate = req.query['start-date'] ? new Date(req.query['start-date']) : Date.today() - 7;
+  const endDate = req.query['end-date'] ? new Date(req.query['end-date']) : Date.today();
+  const disasterType = req.query['type'] ? req.query['type'] : 'flood';
+
+  const filteredDisasters = await Disaster.getDisaster(req.query);
+  console.log(filteredDisasters.slice(0, 10));
+  res.send(req.query);
+  // res.send(`${startDate} ${endDate} ${disasterType}`);
+};
 // controller.addCar = async(req, res) => {
 //   const carToAdd = Car({
 //     name: req.body.name,

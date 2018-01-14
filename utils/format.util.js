@@ -6,7 +6,6 @@ const formatDisaster = (unformattedDisaster) => {
     incidentEndDate,
   } = unformattedDisaster;
 
-  console.log(incidentType, 'INCIDENTY TYPE');
   const relevantDisasterData = {
     locationData: {
       state,
@@ -15,8 +14,10 @@ const formatDisaster = (unformattedDisaster) => {
       incidentType,
     },
     durationData: {
-      incidentBeginDate: new Date(incidentBeginDate.replace(/\s+/g, '')),
-      incidentEndDate: new Date(incidentEndDate.replace(/\s+/g, '')),
+      incidentBeginDate: incidentBeginDate.replace(/\s+/g, ''),
+      incidentEndDate: incidentEndDate.replace(/\s+/g, ''),
+      // incidentBeginDate: new Date(incidentBeginDate.replace(/\s+/g, '')),
+      // incidentEndDate: new Date(incidentEndDate.replace(/\s+/g, '')),
     },
   };
 
