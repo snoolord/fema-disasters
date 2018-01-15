@@ -1,17 +1,85 @@
 <html>
-<h1>hi </h1>
-<div class="stuff">
-  <input type="text" class='url'>
-  <input type="submit" onclick="hi()" value="go">
-</div>
+<!-- <script src='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.js'></script> -->
+<!-- <link href='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css' rel='stylesheet' /> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.css">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  #map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+  }
+
+  #fema-disasters {
+    width: 70%;
+  }
+
+  .fema-disasters-date-picker {
+    font-family: Arial, Helvetica, sans-serif;
+    height: 36px;
+  }
+
+  #fema-disasters-filters {
+    display: flex;
+  }
+</style>
+
+<body>
+  <div id="fema-disasters">
+    <h1 class="title is-3" id="fema-disasters-header">Fema Disasters API Explorer</h1>
+    <section id="fema-disasters-filters">
+      <div class="select">
+        <select name="disaster-type" id="fema-disasters-type-select">
+          <option value="Flood">Flood</option>
+          <option value="Tornado">Tornado</option>
+        </select>
+      </div>
+      <div id="start-date-field" class="field">
+        <input type="date" id="start-date" class="fema-disasters-date-picker" name="Start Date">
+      </div>
+      <div id="end-date-field" class="field">
+        <input type="date" id="end-date" class="fema-disasters-date-picker" name="End Date">
+      </div>
+      <button id="fema-disasters-filter-submit" class="button is-primary">Filter</button>
+    </section>
+  </div>
+</body>
 <script type="text/javascript">
   var local_data = JSON.parse('<%- disasters %>')
-  console.log(local_data)
+  document.querySelector('#fema-disasters-filter-submit').addEventListener('click', function () {
+    submit()
+  })
 
-  function hi() {
-    let input = document.querySelector(".url")
-    console.log(input);
-    document.location = '/' + input.value
+  function submit() {
+    console.log('hi')
+    let startDate = document.getElementById("start-date").value
+    let endDate = document.getElementById("end-date").value
+    let disasterType = document.getElementById("fema-disasters-type-select").value
+    console.log(startDate > endDate)
+    if (startDate >= endDate) {
+      //create error message
+      const endDateErrorMessage = document.createElement('p')
+      endDateErrorMessage.innerHTML = 'End date must be after start date'
+      endDateErrorMessage.className = "help is-danger"
+      endDateErrorMessage.style = "position: absolute;"
+
+      const endDateField = document.getElementById('end-date-field')
+      endDateField.appendChild(endDateErrorMessage)
+    } else {
+
+      const url = '/disasters?' + [startDate, endDate, disasterType].join('&')
+      console.log(url)
+      // document.location = url
+    }
   }
 </script>
 
