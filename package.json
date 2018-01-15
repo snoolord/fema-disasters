@@ -21,16 +21,17 @@
   ],
   "author": "Tom Yitav <tomyitav@gmail.com>",
   "dependencies": {
+    "babel-polyfill": "^6.16.0",
     "body-parser": "^1.15.2",
     "cors": "^2.8.0",
     "csvtojson": "^1.1.9",
     "express": "4.14.0",
+    "jasmine": "^2.8.0",
     "lodash": "^4.15.0",
     "mongoose": "^4.8.6",
     "morgan": "^1.8.2",
     "winston": "^2.3.1",
-    "winston-daily-rotate-file": "^1.4.6",
-    "babel-polyfill": "^6.16.0"
+    "winston-daily-rotate-file": "^1.4.6"
   },
   "devDependencies": {
     "babel-cli": "6.16.0",
