@@ -37,7 +37,12 @@ controller.getDisaster = async(req, res) => {
     const filteredDisasters = await Disaster.getDisaster(req.query);
     logger.info('Getting diaster');
     res.status(201);
-    res.send(filteredDisasters);
+    // res.send(filteredDisasters);
+    res.render('index', {
+      disasters: JSON.stringify({
+        disasters: filteredDisasters,
+      }),
+    });
   } catch (err) {
     logger.error(`Error in getting disasters - ${err}`);
     res.send('Got error in getDisaster');

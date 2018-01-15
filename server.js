@@ -29,7 +29,10 @@ app.use(morgan('dev', {
   stream: logger.stream,
 }));
 
-app.use('/cars', cars);
+app.set('views', `${__dirname}/views`);
+app.engine('html', require('ejs').renderFile);
+
+app.set('view engine', 'ejs');
 
 app.use('/disasters', disasters);
 
