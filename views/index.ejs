@@ -129,9 +129,14 @@
 
   <script src="/../climate-disasters/us-states.js"></script>
   <script src="/../utils/views/states.util.js"></script>
+  <script src="/../views/javascript/map.js"></script>
+
   <script>
+    /*
+     * manipulates the us-states.js data so that it can populate with how many disasters occured
+     * disasters is bootstrapped from app local passed from the express route
+     */
     let disasters = JSON.parse('<%- disasters %>').disasters;
-    console.log(disasters)
     let states = statesData.features;
 
     function findStateIndex(stateName) {
@@ -141,8 +146,10 @@
     }
 
     states.forEach(function (state) {
+      // sets numOfDisasters for each variable to 0
       state.properties.numOfDisasters = 0
     })
+
     for (let i = 0; i < disasters.length; i++) {
       let currDisaster = disasters[i]
       let currDisasterState = abbrState(currDisaster.locationData.state, "name")
@@ -151,100 +158,19 @@
         continue;
       }
       let stateDataToBeAdded = states[findStateIndex(currDisasterState)]
-      if (stateDataToBeAdded.properties[currDisasterType]) {
-        stateDataToBeAdded.properties[currDisasterType]++;
+      /*
+        TODO: Add functionality to disastertype data on the map on hover
+        // if (stateDataToBeAdded.properties[currDisasterType]) {
+        //   stateDataToBeAdded.properties[currDisasterType]++;
 
-      } else {
-        stateDataToBeAdded.properties[currDisasterType] = 1;
-      }
+        // } else {
+        //   stateDataToBeAdded.properties[currDisasterType] = 1;
+        // }
+      */
       stateDataToBeAdded.properties.numOfDisasters++;
     }
   </script>
-  <script>
-    mapboxgl.accessToken = 'pk.eyJ1IjoiY2Fwcmlwb3QiLCJhIjoiY2pjMDJqcDhsMDQ2MzJ4bW85MTR0YXBzYiJ9.Ag9mIZTDONNN9JdN2kW76g';
-    var map = new mapboxgl.Map({
-      container: 'map',
-      maxZoom: 5.5,
-      minZoom: 1.8,
-      style: 'mapbox://styles/mapbox/light-v9',
-      center: [-115.36957574368233, 50.732480262447524],
-      zoom: 2.850019725398168
-    });
 
-    map.on('load', function () {
-
-      var layers = map.getStyle().layers;
-      // Find the index of the first symbol layer in the map style
-      var firstSymbolId;
-      for (var i = 0; i < layers.length; i++) {
-        if (layers[i].type === 'symbol') {
-          firstSymbolId = layers[i].id;
-          break;
-        }
-      }
-
-      var statesLayer = map.addLayer({
-        'id': 'us-states',
-        'type': 'fill',
-        'source': {
-          type: 'geojson',
-          data: statesData
-        },
-        'paint': {
-          'fill-color': {
-            property: 'numOfDisasters',
-            stops: [
-              [0, '#d3d3d3'],
-              [5, '#56D7FF'],
-              [10, '#3DBEFF'],
-              [20, '#23A4FF'],
-              [50, '#0A8BE6'],
-              [100, '#0071CC'],
-              [200, '#0058B3'],
-              [500, '#003E99'],
-            ]
-          },
-          'fill-opacity': 0.75
-        }
-      }, firstSymbolId);
-
-      var layers = ['0-5', '5-10', '10-20', '20-50', '50-100', '100-200', '200-500', '500+'];
-      var colors = ['#d3d3d3', '#56D7FF', '#3DBEFF', '#23A4FF', '#0A8BE6', '#0071CC', '#0058B3BD0026', '#003E99'];
-      for (i = 0; i < layers.length; i++) {
-        var layer = layers[i];
-        var color = colors[i];
-        var item = document.createElement('div');
-        var key = document.createElement('span');
-        key.className = 'legend-key';
-        key.style.backgroundColor = color;
-
-        var value = document.createElement('span');
-        value.innerHTML = layer;
-        item.appendChild(key);
-        item.appendChild(value);
-        legend.appendChild(item);
-      }
-    });
-
-    map.on('click', 'us-states', function (e) {
-      var coordinates = almostFlatten(e.features[0].geometry.coordinates);
-      var bounds = new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]);
-      coordinates.forEach(function (coord) {
-        bounds.extend(coord);
-      })
-
-      map.fitBounds(bounds, {
-        padding: 100
-      });
-    });
-
-
-    function almostFlatten(arr) {
-      return arr.reduce(function (flat, toFlatten) {
-        return flat.concat(Array.isArray(toFlatten[0]) ? almostFlatten(toFlatten) : [toFlatten]);
-      }, []);
-    }
-  </script>
   <script type="text/javascript">
     var local_data = JSON.parse('<%- disasters %>')
     document.querySelector('#fema-disasters-filter-submit').addEventListener('click', function () {
@@ -273,12 +199,15 @@
         let startDateURL = startDate ? `start-date=${startDate}` : '';
         let endDateURL = endDate ? `end-date=${endDate}` : '';
         let disasterTypeURL = `type=${disasterType}`;
+        // Either the field is filled in or not. Separate out the non-filled URLs
         let validURLs = [];
         [startDateURL, endDateURL, disasterTypeURL].forEach(function (urlFragment) {
           if (urlFragment.length > 0) {
             validURLs.push(urlFragment)
           }
         })
+        // each url after the initial ? is joined together by a & 
+        // NOTE: Only valid URL fragments (filled in filters) will be joined together
         let queryString = validURLs.join('&');
         console.log(url + queryString)
         document.location = url + queryString;

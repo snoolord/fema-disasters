@@ -69,7 +69,6 @@ DisasterModel.formatQuery = (queryParams) => {
   const startDate = queryParams['start-date'] ? new Date(queryParams['start-date']) : new Date('1953-05-29');
   const endDate = queryParams['end-date'] ? new Date(queryParams['end-date']) : new Date('1955-05-30');
   const disasterType = queryParams['type'] ? queryParams['type'] : 'Flood';
-  console.log(startDate, endDate);
   const query = {
     disasterDescriptions: {
       incidentType: disasterType,

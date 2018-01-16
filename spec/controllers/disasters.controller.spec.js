@@ -9,7 +9,11 @@ require('babel-polyfill');
 describe('Disaster Controller', () => {
   describe('DisasterModel.getDisaster', () => {
     const req = {
-      query: {},
+      query: {
+        'start-date': '1953-05-29',
+        'end-date': '1953-05-30',
+        type: 'Flood',
+      },
       params: {},
       body: {},
     };
@@ -21,6 +25,7 @@ describe('Disaster Controller', () => {
       send: jasmine.createSpy().and.callFake(function () {
         return this;
       }),
+      render: jasmine.createSpy().and.callFake(() => {}),
     };
 
     it('GET /disasters should call Disaster.getDisaster from the model', () => {
