@@ -43,6 +43,6 @@ app.get('/', (req, res) => {
   res.send('Invalid endpoint!');
 });
 
-app.listen(port, () => {
-  logger.info('server started - ', port);
+app.listen(process.env.PORT || port, () => {
+  logger.info('server started - ', process.env.PORT || port);
 });
