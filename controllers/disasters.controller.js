@@ -5,16 +5,16 @@ import DisastersControllerUtil from '../utils/controllers/disasters.controller.u
 
 const controller = {};
 
-controller.getAll = async(req, res) => {
-  try {
-    const disasters = await Disaster.getAll();
-    logger.info('sending all disasters...');
-    res.send(disasters);
-  } catch (err) {
-    logger.error(`Error in getting disasters- ${err}`);
-    res.send('Got error in getAll');
-  }
-};
+// controller.getAll = async(req, res) => {
+//   try {
+//     const disasters = await Disaster.getAll();
+//     logger.info('sending all disasters...');
+//     res.send(disasters);
+//   } catch (err) {
+//     logger.error(`Error in getting disasters- ${err}`);
+//     res.send('Got error in getAll');
+//   }
+// };
 
 controller.seedData = async(req, res) => {
   try {
@@ -39,7 +39,6 @@ controller.getDisaster = async(req, res) => {
       const filteredDisasters = await Disaster.getDisaster(req.query);
       logger.info('Getting diaster');
       res.status(201);
-      // res.send(filteredDisasters);
       res.render('index', {
         disasters: JSON.stringify({
           disasters: filteredDisasters,

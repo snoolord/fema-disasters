@@ -1,1 +1,1 @@
-web: node ./server.js --exec babel-node
+web: yarn build && yarn serve

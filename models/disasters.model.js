@@ -51,13 +51,6 @@ DisasterModel.seed = async() => {
     console.log('remove all disasters');
   });
   return seed();
-  // seed().then((disasters) => {
-  //   disasters.forEach(disaster => {
-  //     Disaster.addDisaster(disaster)
-  //   });
-  // }).catch((err) => {
-  //   console.log('error');
-  // });
 };
 
 DisasterModel.getDisaster = async(queryParams) => {

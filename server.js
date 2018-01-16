@@ -4,7 +4,6 @@ import cors from 'cors';
 import logger from './core/logger/app-logger';
 import morgan from 'morgan';
 import config from './core/config/config.dev';
-import cars from './routes/cars.route';
 import connectToDb from './db/connect';
 import disasters from './routes/disasters.route';
 
@@ -28,15 +27,13 @@ app.use(bodyParser.urlencoded({
 app.use(morgan('dev', {
   stream: logger.stream,
 }));
-app.use(express.static(`${__dirname }/`));
+app.use(express.static(`${__dirname}/`));
 app.set('views', `${__dirname}/views`);
 app.engine('html', require('ejs').renderFile);
 
 app.set('view engine', 'ejs');
 
 app.get('/views/map.ejs', (req, res) => {
-  console.log(req.query);
-  console.log(req.url);
   res.render('map');
 });
 app.use('/disasters', disasters);

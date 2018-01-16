@@ -8,7 +8,7 @@ function isValidDisasterURLParams(urlParams) {
 }
 
 function formatRedirectURL(urlParams) {
-  const disasterType = urlParams['type'] ? urlParams['type'] : 'Flood';
+  const disasterType = urlParams['type'] > 0 ? urlParams['type'] : 'Flood';
   let startDate = urlParams['start-date'] ? urlParams['start-date'] : null;
   let endDate = urlParams['end-date'] ? urlParams['end-date'] : null;
 
@@ -20,6 +20,7 @@ function formatRedirectURL(urlParams) {
     if (beforeOrLater === 'later') {
       [year, month, day] = startDate.split('-');
       if (day + 7 > 28) {
+        // if the day goes to the next month set it to the first day
         month++;
         day = 1;
       } else {
@@ -28,6 +29,7 @@ function formatRedirectURL(urlParams) {
     } else if (beforeOrLater === 'before') {
       [year, month, day] = endDate.split('-');
       if (day - 7 < 1) {
+        // if the day goes to the previous month then move the day to the 28th
         month--;
         day = 28;
       } else {
