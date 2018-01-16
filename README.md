@@ -19,10 +19,12 @@ I wanted to build more with the async / await syntax so I chose Express. req.que
 
 3. Building REST API
 I used Jasmine to test the API because it's what I'm familiar with for my personal projects. Mongoose was used so that it would be easy to query for Documents and serve them straight to the view. Defaulting params is taken care of in the back end in disasters.controller.util.js. Lone dates are either set ~7 days back or forward and disaster type defaults to Flood. 
+The REST API renders a index.ejs template. The response from the database is bootstrapped to the template so that the client side JavaScript can access it. 
 
 4. Building out the Visualization
 I used vanilla JavaScript and HTML to build out filters for start-date, end-date, and disaster-type. The filter button makes a redirect to a new URL and the server takes care of filling in any defaults. There is some basic error handling that shows up when you enter an end-date that is earlier than a start date.
 
+The geojson data from mapbox is used as a template for all the states. The bootstrapped data response is used to populate the states template with data about the disasters. All disasters are added to the geojson data which is able to be translated onto the US map with the Mapbox APIs. 
 ## Technologies used
 
 - Express
