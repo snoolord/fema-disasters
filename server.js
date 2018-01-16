@@ -28,12 +28,17 @@ app.use(bodyParser.urlencoded({
 app.use(morgan('dev', {
   stream: logger.stream,
 }));
-
+app.use(express.static(`${__dirname }/`));
 app.set('views', `${__dirname}/views`);
 app.engine('html', require('ejs').renderFile);
 
 app.set('view engine', 'ejs');
 
+app.get('/views/map.ejs', (req, res) => {
+  console.log(req.query);
+  console.log(req.url);
+  res.render('map');
+});
 app.use('/disasters', disasters);
 
 // Index route

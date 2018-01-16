@@ -1,86 +1,291 @@
+<!DOCTYPE html>
 <html>
-<!-- <script src='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.js'></script> -->
-<!-- <link href='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css' rel='stylesheet' /> -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.css">
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    width: 100%;
-  }
 
-  #map {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 100%;
-  }
+<head>
+  <meta charset=utf-8 />
+  <title>Choropleth</title>
 
-  #fema-disasters {
-    width: 70%;
-  }
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 
-  .fema-disasters-date-picker {
-    font-family: Arial, Helvetica, sans-serif;
-    height: 36px;
-  }
+  <script src='https://api.mapbox.com/mapbox-gl-js/v0.43.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v0.43.0/mapbox-gl.css' rel='stylesheet' />
 
-  #fema-disasters-filters {
-    display: flex;
-  }
-</style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.css">
+
+  <style>
+    #fema-disasters {
+      width: 70%;
+    }
+
+    .fema-disasters-date-picker {
+      font-family: Arial, Helvetica, sans-serif;
+      height: 36px;
+    }
+
+    #fema-disasters-filters {
+      display: flex;
+    }
+
+    h3 {
+      font-size: 1em;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    h2,
+    h3 {
+      margin: 10px;
+      font-size: 1.2em;
+    }
+
+    h3 {
+      font-size: 1em;
+    }
+
+    p {
+      font-size: 0.85em;
+      margin: 10px;
+      text-align: left;
+    }
+    /**
+* Create a position for the map
+* on the page */
+
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+    /**
+* Set rules for how the map overlays
+* (info box and legend) will be displayed
+* on the page. */
+
+    .map-overlay {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.8);
+      margin-right: 20px;
+      font-family: Arial, sans-serif;
+      overflow: auto;
+      border-radius: 3px;
+    }
+
+    #features {
+      top: 0;
+      margin-top: 20px;
+      height: 30%;
+    }
+
+    #legend {
+      padding: 10px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      line-height: 18px;
+      height: 150px;
+      margin-bottom: 40px;
+      width: 100px;
+    }
+
+    .legend-key {
+      display: inline-block;
+      border-radius: 20%;
+      width: 10px;
+      height: 10px;
+      margin-right: 5px;
+    }
+  </style>
+</head>
 
 <body>
-  <div id="fema-disasters">
-    <h1 class="title is-3" id="fema-disasters-header">Fema Disasters API Explorer</h1>
-    <section id="fema-disasters-filters">
-      <div class="select">
-        <select name="disaster-type" id="fema-disasters-type-select">
-          <option value="Flood">Flood</option>
-          <option value="Tornado">Tornado</option>
-        </select>
-      </div>
-      <div id="start-date-field" class="field">
-        <input type="date" id="start-date" class="fema-disasters-date-picker" name="Start Date">
-      </div>
-      <div id="end-date-field" class="field">
-        <input type="date" id="end-date" class="fema-disasters-date-picker" name="End Date">
-      </div>
-      <button id="fema-disasters-filter-submit" class="button is-primary">Filter</button>
-    </section>
+
+  <div id='map'></div>
+  <div class='map-overlay' id='features'>
+    <div id="fema-disasters">
+      <h1 class="title is-3" id="fema-disasters-header">Fema Disasters API Explorer</h1>
+      <section id="fema-disasters-filters">
+        <div class="select">
+          <select name="disaster-type" id="fema-disasters-type-select">
+            <option value="Flood">Flood</option>
+            <option value="Tornado">Tornado</option>
+            <option value="">None</option>
+          </select>
+        </div>
+        <div id="start-date-field" class="field">
+          <input type="date" id="start-date" class="fema-disasters-date-picker" name="Start Date">
+        </div>
+        <div id="end-date-field" class="field">
+          <input type="date" id="end-date" class="fema-disasters-date-picker" name="End Date">
+        </div>
+        <button id="fema-disasters-filter-submit" class="button is-primary">Filter</button>
+      </section>
+    </div>
   </div>
-</body>
-<script type="text/javascript">
-  var local_data = JSON.parse('<%- disasters %>')
-  document.querySelector('#fema-disasters-filter-submit').addEventListener('click', function () {
-    submit()
-  })
+  <div class='map-overlay' id='legend'></div>
 
-  function submit() {
-    console.log('hi')
-    let startDate = document.getElementById("start-date").value
-    let endDate = document.getElementById("end-date").value
-    let disasterType = document.getElementById("fema-disasters-type-select").value
-    console.log(startDate > endDate)
-    if (startDate >= endDate) {
-      //create error message
-      const endDateErrorMessage = document.createElement('p')
-      endDateErrorMessage.innerHTML = 'End date must be after start date'
-      endDateErrorMessage.className = "help is-danger"
-      endDateErrorMessage.style = "position: absolute;"
+  <script src="/../climate-disasters/us-states.js"></script>
+  <script src="/../utils/views/states.util.js"></script>
+  <script>
+    let disasters = JSON.parse('<%- disasters %>').disasters;
+    console.log(disasters)
+    let states = statesData.features;
 
-      const endDateField = document.getElementById('end-date-field')
-      endDateField.appendChild(endDateErrorMessage)
-    } else {
-
-      const url = '/disasters?' + [startDate, endDate, disasterType].join('&')
-      console.log(url)
-      // document.location = url
+    function findStateIndex(stateName) {
+      return states.findIndex(function (state) {
+        return stateName === state.properties.name
+      })
     }
-  }
-</script>
+
+    states.forEach(function (state) {
+      state.properties.numOfDisasters = 0
+    })
+    for (let i = 0; i < disasters.length; i++) {
+      let currDisaster = disasters[i]
+      let currDisasterState = abbrState(currDisaster.locationData.state, "name")
+      let currDisasterType = currDisaster.disasterDescriptions.incidentType
+      if (findStateIndex(currDisasterState) === -1) {
+        continue;
+      }
+      let stateDataToBeAdded = states[findStateIndex(currDisasterState)]
+      if (stateDataToBeAdded.properties[currDisasterType]) {
+        stateDataToBeAdded.properties[currDisasterType]++;
+
+      } else {
+        stateDataToBeAdded.properties[currDisasterType] = 1;
+      }
+      stateDataToBeAdded.properties.numOfDisasters++;
+    }
+  </script>
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiY2Fwcmlwb3QiLCJhIjoiY2pjMDJqcDhsMDQ2MzJ4bW85MTR0YXBzYiJ9.Ag9mIZTDONNN9JdN2kW76g';
+    var map = new mapboxgl.Map({
+      container: 'map',
+      maxZoom: 5.5,
+      minZoom: 1.8,
+      style: 'mapbox://styles/mapbox/light-v9',
+      center: [-115.36957574368233, 50.732480262447524],
+      zoom: 2.850019725398168
+    });
+
+    map.on('load', function () {
+
+      var layers = map.getStyle().layers;
+      // Find the index of the first symbol layer in the map style
+      var firstSymbolId;
+      for (var i = 0; i < layers.length; i++) {
+        if (layers[i].type === 'symbol') {
+          firstSymbolId = layers[i].id;
+          break;
+        }
+      }
+
+      var statesLayer = map.addLayer({
+        'id': 'us-states',
+        'type': 'fill',
+        'source': {
+          type: 'geojson',
+          data: statesData
+        },
+        'paint': {
+          'fill-color': {
+            property: 'numOfDisasters',
+            stops: [
+              [0, '#d3d3d3'],
+              [5, '#56D7FF'],
+              [10, '#3DBEFF'],
+              [20, '#23A4FF'],
+              [50, '#0A8BE6'],
+              [100, '#0071CC'],
+              [200, '#0058B3'],
+              [500, '#003E99'],
+            ]
+          },
+          'fill-opacity': 0.75
+        }
+      }, firstSymbolId);
+
+      var layers = ['0-5', '5-10', '10-20', '20-50', '50-100', '100-200', '200-500', '500+'];
+      var colors = ['#d3d3d3', '#56D7FF', '#3DBEFF', '#23A4FF', '#0A8BE6', '#0071CC', '#0058B3BD0026', '#003E99'];
+      for (i = 0; i < layers.length; i++) {
+        var layer = layers[i];
+        var color = colors[i];
+        var item = document.createElement('div');
+        var key = document.createElement('span');
+        key.className = 'legend-key';
+        key.style.backgroundColor = color;
+
+        var value = document.createElement('span');
+        value.innerHTML = layer;
+        item.appendChild(key);
+        item.appendChild(value);
+        legend.appendChild(item);
+      }
+    });
+
+    map.on('click', 'us-states', function (e) {
+      var coordinates = almostFlatten(e.features[0].geometry.coordinates);
+      var bounds = new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]);
+      coordinates.forEach(function (coord) {
+        bounds.extend(coord);
+      })
+
+      map.fitBounds(bounds, {
+        padding: 100
+      });
+    });
+
+
+    function almostFlatten(arr) {
+      return arr.reduce(function (flat, toFlatten) {
+        return flat.concat(Array.isArray(toFlatten[0]) ? almostFlatten(toFlatten) : [toFlatten]);
+      }, []);
+    }
+  </script>
+  <script type="text/javascript">
+    var local_data = JSON.parse('<%- disasters %>')
+    document.querySelector('#fema-disasters-filter-submit').addEventListener('click', function () {
+      submit()
+    })
+
+    function submit() {
+      let startDate = document.getElementById("start-date").value
+      let endDate = document.getElementById("end-date").value
+      let disasterType = document.getElementById("fema-disasters-type-select").value
+      console.log(startDate > endDate)
+      // if endDate and startDate are both provided then only send the request if the endDate is after startDate
+      if (endDate && startDate && startDate >= endDate) {
+        //create error message
+        const endDateErrorMessage = document.createElement('p')
+        endDateErrorMessage.innerHTML = 'End date must be after start date'
+        endDateErrorMessage.className = "help is-danger"
+        endDateErrorMessage.style = "position: absolute;"
+
+        const endDateField = document.getElementById('end-date-field')
+        endDateField.appendChild(endDateErrorMessage)
+      } else {
+        // default filter logic is in backend, will construct every URL based on filters submitted
+        // as long as the endDate is later than the startDate for a range
+        let url = '/disasters?';
+        let startDateURL = startDate ? `start-date=${startDate}` : '';
+        let endDateURL = endDate ? `end-date=${endDate}` : '';
+        let disasterTypeURL = `type=${disasterType}`;
+        let validURLs = [];
+        [startDateURL, endDateURL, disasterTypeURL].forEach(function (urlFragment) {
+          if (urlFragment.length > 0) {
+            validURLs.push(urlFragment)
+          }
+        })
+        let queryString = validURLs.join('&');
+        console.log(url + queryString)
+        document.location = url + queryString;
+      }
+    }
+  </script>
+
+</body>
 
 </html>
