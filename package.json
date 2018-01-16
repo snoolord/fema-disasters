@@ -20,9 +20,6 @@
     "Express"
   ],
   "author": "Winston Zhao <winston.j.zhao@gmail.com>",
-  "engines": {
-    "node": "6.11.0"
-  },
   "dependencies": {
     "babel-polyfill": "^6.16.0",
     "body-parser": "^1.15.2",
