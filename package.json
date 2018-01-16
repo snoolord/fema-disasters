@@ -12,14 +12,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tomyitav/express-es6-starter.git"
+    "url": "fema-disasters.herokuapp.com"
   },
   "keywords": [
     "Node.js",
     "Javascript",
     "Express"
   ],
-  "author": "Tom Yitav <tomyitav@gmail.com>",
+  "author": "Winston Zhao <winston.j.zhao@gmail.com>",
+  "engines": {
+    "node": "6.11.0"
+  },
   "dependencies": {
     "babel-polyfill": "^6.16.0",
     "body-parser": "^1.15.2",
@@ -27,10 +30,13 @@
     "csvtojson": "^1.1.9",
     "ejs": "^2.5.7",
     "express": "4.14.0",
+    "global": "^4.3.2",
+    "heroku": "^0.2.0",
     "jasmine": "^2.8.0",
     "lodash": "^4.15.0",
     "mongoose": "^4.8.6",
     "morgan": "^1.8.2",
+    "node": "^9.4.0",
     "winston": "^2.3.1",
     "winston-daily-rotate-file": "^1.4.6"
   },
