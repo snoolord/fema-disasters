@@ -22,6 +22,7 @@
   "author": "Winston Zhao <winston.j.zhao@gmail.com>",
   "dependencies": {
     "babel-polyfill": "^6.16.0",
+    "babel-cli": "^6.26.0",
     "body-parser": "^1.15.2",
     "cors": "^2.8.0",
     "csvtojson": "^1.1.9",
@@ -38,7 +39,6 @@
     "winston-daily-rotate-file": "^1.4.6"
   },
   "devDependencies": {
-    "babel-cli": "6.16.0",
     "babel-core": "^6.17.0",
     "babel-eslint": "^7.0.0",
     "babel-plugin-inline-import": "^2.0.1",
