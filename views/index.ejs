@@ -3,7 +3,7 @@
 
 <head>
   <meta charset=utf-8 />
-  <title>Choropleth</title>
+  <title>Fema Disasters API Explorer</title>
 
   <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 
@@ -79,16 +79,20 @@
     #features {
       top: 0;
       margin-top: 20px;
-      height: 30%;
+      height: 240px;
+      padding: 10px;
+      border-radius: 10px;
     }
 
     #legend {
       padding: 10px;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       line-height: 18px;
-      height: 150px;
       margin-bottom: 40px;
       width: 100px;
+      padding: 10px;
+      border-radius: 10px;
+      height: 165px;
     }
 
     .legend-key {
@@ -108,20 +112,25 @@
     <div id="fema-disasters">
       <h1 class="title is-3" id="fema-disasters-header">Fema Disasters API Explorer</h1>
       <section id="fema-disasters-filters">
-        <div class="select">
-          <select name="disaster-type" id="fema-disasters-type-select">
-            <option value="Flood">Flood</option>
-            <option value="Tornado">Tornado</option>
-            <option value="">None</option>
-          </select>
+        <div class="field">
+          <label class="label">Disaster Type</label>
+          <div class="select">
+            <select name="disaster-type" id="fema-disasters-type-select">
+              <option value="Flood">Flood</option>
+              <option value="Tornado">Tornado</option>
+              <option value="">None</option>
+            </select>
+          </div>
         </div>
         <div id="start-date-field" class="field">
+          <label class="label">Start Date</label>
           <input type="date" id="start-date" class="fema-disasters-date-picker" name="Start Date">
         </div>
         <div id="end-date-field" class="field">
+          <label class="label">End Date</label>
           <input type="date" id="end-date" class="fema-disasters-date-picker" name="End Date">
         </div>
-        <button id="fema-disasters-filter-submit" class="button is-primary">Filter</button>
+        <button style="margin-top: 32px;" id="fema-disasters-filter-submit" class="button is-primary">Filter</button>
       </section>
     </div>
   </div>
@@ -210,6 +219,7 @@
         // NOTE: Only valid URL fragments (filled in filters) will be joined together
         let queryString = validURLs.join('&');
         console.log(url + queryString)
+        // redirects url to the new filter
         document.location = url + queryString;
       }
     }
